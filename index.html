@@ -1,0 +1,119 @@
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="style.css" media="all" />
+    <script src="highlight.js"></script>
+    <script src="lang-css.js"></script>
+    <script src="helpers.js"></script>
+
+    <script>
+        function doIt() {
+          var args = {
+            showWhitespace : true,
+            lineNumbers    : true
+          };
+          DlHighlight.HELPERS.highlightByName('dlhl', "pre", args);
+        };
+    </script>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/> 
+	<title>RFMLight Proposal</title>
+</head>
+
+
+<body onload="doIt()">
+<h1>RFMLight Proposal</h1>
+<p><b>XML is bloated. Let's move to a new, light-weight coding format. This syntax has issues, i.e. it's very early stuff. Reminiscent of CSS. Maybe we could use margin-top/bottom/left/right instead of left/right/bottom/top-margin now?<br /><br />by @mmackh</b></p>
+<pre name="dlhl" class="css">
+// set global vars, only in root
+app {
+	mode = 'dev';
+	id = '972-ADEA';
+	twitter-secret = '54f6a5d468sdf456wef132';
+}
+
+view {
+	statusBar = visible;
+	statusBarColor = grey;
+	padding = 0;
+	margin = 0;
+} :actions {
+	set.will-appear (if="'[session:font-size]' == ''") {
+		save-locally = true;
+		values {
+			font-size = 18; //No quotes for integers
+		}
+	}
+}
+
+view.datasource:RSSData {
+	data-location = 'http://git.com/?v=rss&param=2'; //Signal strings with double/single quotes
+	cache = true; // Properties and BOOL have no quotes
+	hide-activity-indicator = true;
+}
+
+view.layout:main_container {
+	width = 100%;
+	height = 100%;
+	layout-type = absolute;
+	background-color = #333333;
+}
+
+main_container.layout:main_container_title { //Same as view.main_container.main_container_title
+	height = 40;
+	width = 100%;
+	background-color = #666666;
+	layout-type = float;
+}
+
+main_container_title.text { //Widgets don't require an ID
+	font = Helvetica:16;
+	vertical-alignment = middle;
+	horizontal-alignment = left;
+	justification = left;
+	text = 'Title to RSS Feed';
+} :actions {
+	modify.touch {
+		duration = 2;
+		widget-id = main_container_title;
+		values {
+			background-color = #333333;
+		}
+	}
+	alert.touch-up {
+		title = 'Tom\'s [app:device]'; //quotes can be escaped, shortcodes can be used inside strings 
+		message = [data:RSSData('rss/channel/item[1]/description')].to_upper; //Shortcodes can now also be applied to [session:form]
+		button-text = 'OK';
+	}
+}
+
+main_container_title.text (if="'[app:mode]'=='dev'") { //Determine if widget is to be rendered
+	font = Helvetica:[session:fontsize];
+	vertical-alignment = middle;
+	horizontal-alignment (device = 'iPad') = right; //Conditionals in round brackets
+	justification = left;
+	text = [eval("'[data:RSSData('rss/channel/title')]' + '[app:device].to_upper' + ' App'")];
+}
+
+view.button:navigator {
+	width = 40;
+	height = 40;
+	layout-type = float;
+	vertical-alignment = middle;
+	horizontal-alignment = center;
+	text = 'Reload';
+} :actions {
+	navigate.touch {
+		to = root.view
+		navigation-stack-type = replace;
+		navigation-transition = flip-left;
+	}
+
+}
+
+//In case std. Tabbar is required 
+
+view2 {
+	//...
+}
+</pre>
+</body>
+</html>
